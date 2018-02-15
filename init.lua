@@ -87,5 +87,5 @@ effects_api.register_effect({
 
 minetest.register_on_joinplayer(function(player)
 	local name = player:get_player_name()
-	effects_api.give_effect_to_player("test", name)
+	effects_api.give_effect_to_player("flight", name)
 end)
