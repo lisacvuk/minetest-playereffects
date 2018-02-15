@@ -25,7 +25,6 @@ effects_api.give_effect_to_player = function(effect_n, name)
 	effects_api.registered_effects[effect.name].on_add(name) -- Handle the on_add function.
 
 	player:set_attribute("effects_api:effects", minetest.serialize(current_effects))
-	print(minetest.serialize(current_effects))
 end
 
 minetest.register_globalstep(function(dtime)
@@ -56,7 +55,6 @@ effects_api.remove_effect_to_player = function(effect_n, name)
     effects_api.registered_effects[effect.name].on_remove(name)
     
 	player:set_attribute("effects_api:effects", minetest.serialize(current_effects))
-	print(minetest.serialize(current_effects))
 end
 
 minetest.register_chatcommand("remove_effect_test", {
