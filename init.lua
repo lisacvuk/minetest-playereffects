@@ -42,3 +42,4 @@ minetest.register_on_joinplayer(function(player)
 	local name = player:get_player_name()
 	effects_api.give_effect_to_player("test", name)
 end)
+test
