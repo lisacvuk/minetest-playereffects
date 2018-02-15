@@ -15,6 +15,11 @@ effects_api.give_effect_to_player = function(effect_n, name)
 	local effect = effects_api.registered_effects[effect_n]
 	local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects")) or {}
 	
+	if not effect then
+		minetest.log("[EFFECTS API] effects_api.give_effect_to_player(effect_n, name): Effect is nil")
+		return
+	end
+	
 	current_effects[effect.name] = {}
 
 	effects_api.registered_effects[effect.name].on_add(name) -- Handle the on_add function.
@@ -26,8 +31,11 @@ end
 minetest.register_globalstep(function(dtime)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
-		local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects"))
+		local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects")) or {}
 		for effect,data in pairs(current_effects) do
+			if not effect or not effects_api.registered_effects[effect] then
+				break
+			end
 			effects_api.registered_effects[effect].on_loop(name)
 		end
 	end
