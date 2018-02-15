@@ -45,6 +45,11 @@ effects_api.remove_effect_to_player = function(effect_n, name)
 	local player = minetest.get_player_by_name(name)
 	local effect = effects_api.registered_effects[effect_n]
 	local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects")) or {}
+    
+    if not effect then
+		minetest.log("[EFFECTS API] effects_api.remove_effect_to_player(effect_n, name): Effect is nil")
+		return
+	end
 	
 	current_effects[effect.name] = nil
 
