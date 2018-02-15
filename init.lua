@@ -42,4 +42,23 @@ minetest.register_on_joinplayer(function(player)
 	local name = player:get_player_name()
 	effects_api.give_effect_to_player("test", name)
 end)
-test
+
+effects_api.remove_effect_to_player = function(effect_n, name)
+	local player = minetest.get_player_by_name(name)
+	local effect = effects_api.registered_effects[effect_n]
+	local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects")) or {}
+	
+	current_effects[effect.name] = effects_api.registered_effects[effect.name]
+
+	player:set_attribute("effects_api:effects", nil)
+	print(minetest.serialize(current_effects))
+end
+
+minetest.register_chatcommand("remove_effect_test", {
+    params = "",
+    description = "Removes the test effect.",
+    func = function(name, param)
+        effects_api.remove_effect_to_player("test", name)
+    end,
+})
+
