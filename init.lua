@@ -23,21 +23,6 @@ effects_api.give_effect_to_player = function(effect_n, name)
 	print(minetest.serialize(current_effects))
 end
 
-effects_api.register_effect({
-	name = "test",
-	on_loop = function(name)
-		--minetest.chat_send_all("Test!")
-	end,
-	on_add = function(name)
-		minetest.set_player_privs(name, {fly=true})
-		minetest.chat_send_all("Player " .. name .. " can fly like a bird!")
-	end,
-	on_remove = function(name)
-		minetest.set_player_privs(name, {fly=false})
-		minetest.chat_send_all("Player " .. name .. " can fly like a stone!")
-	end,
-})
-
 minetest.register_globalstep(function(dtime)
 	for _,player in ipairs(minetest.get_connected_players()) do
 		local name = player:get_player_name()
@@ -58,9 +43,11 @@ effects_api.remove_effect_to_player = function(effect_n, name)
 	local effect = effects_api.registered_effects[effect_n]
 	local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects")) or {}
 	
-	current_effects[effect.name] = effects_api.registered_effects[effect.name]
+	current_effects[effect.name] = nil
 
-	player:set_attribute("effects_api:effects", nil)
+    effects_api.registered_effects[effect.name].on_remove(name)
+    
+	player:set_attribute("effects_api:effects", minetest.serialize(current_effects))
 	print(minetest.serialize(current_effects))
 end
 
@@ -72,3 +59,33 @@ minetest.register_chatcommand("remove_effect_test", {
     end,
 })
 
+minetest.register_chatcommand("effects", {
+    params = "",
+    description = "Lists the current effects.",
+    func = function(name, param)
+        local player = minetest.get_player_by_name(name)
+        local message = "Your effects are: "
+        local current_effects = minetest.deserialize(player:get_attribute("effects_api:effects")) or {}
+        for iter,data in pairs(current_effects) do
+            message = message .. iter .. " "
+        end
+        minetest.chat_send_all(message)
+    end,
+})
+
+-- Effects --
+
+effects_api.register_effect({
+	name = "flight",
+	on_loop = function(name)
+		minetest.chat_send_all(name .. " is flying!")
+	end,
+	on_add = function(name)
+		minetest.set_player_privs(name, {fly=true})
+		minetest.chat_send_all("Player " .. name .. " can fly like a bird!")
+	end,
+	on_remove = function(name)
+		minetest.set_player_privs(name, {fly=false})
+		minetest.chat_send_all("Player " .. name .. " can fly like a stone!")
+	end,
+})
