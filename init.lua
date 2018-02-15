@@ -33,11 +33,6 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
-minetest.register_on_joinplayer(function(player)
-	local name = player:get_player_name()
-	effects_api.give_effect_to_player("test", name)
-end)
-
 effects_api.remove_effect_to_player = function(effect_n, name)
 	local player = minetest.get_player_by_name(name)
 	local effect = effects_api.registered_effects[effect_n]
@@ -89,3 +84,8 @@ effects_api.register_effect({
 		minetest.chat_send_all("Player " .. name .. " can fly like a stone!")
 	end,
 })
+
+minetest.register_on_joinplayer(function(player)
+	local name = player:get_player_name()
+	effects_api.give_effect_to_player("test", name)
+end)
